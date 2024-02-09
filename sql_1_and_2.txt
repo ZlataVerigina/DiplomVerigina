@@ -1,0 +1,42 @@
+Подготовительная работа
+#получение доступа к базе данных
+Lenovo@LAPTOP-3CI8EREG ~
+$ ssh 60d4fba4-b8ef-4f4c-8a5d-a03a4d57d5ed@serverhub.praktikum-services.ru -p 4554
+morty@97cef87dbe76:~$ psql -U morty -d scooter_rent
+Password for user morty: smith
+psql (11.18 (Debian 11.18-0+deb10u1))
+Type "help" for help.
+
+scooter_rent=#
+
+#вывести БД по заказам 
+SELECT* 
+FROM "Orders";
+
+#вывести БД по курьерам
+SELECT* 
+FROM "Couriers";
+
+
+Задание 1.
+#вывести список логинов курьеров с количеством их заказов в статусе «В доставке».
+SELECT c.login,
+       COUNT(o.courierId)
+FROM "Couriers" AS c
+JOIN "Orders" AS o ON c."id"=o."courierId"
+WHERE o."inDelivery"=TRUE
+GROUP BY c."login"; 
+#Заказ отображается в базе данных. Баг - заказ задвоен у курьера после взятия в работу
+
+
+Задание 2.
+#вывести все трекеры заказов и их статусы. Убедиться, что в базе данных они записываются корректно.
+SELECT track,
+CASE
+    WHEN finished=TRUE THEN 2
+    WHEN cancelled=TRUE THEN -1
+    WHEN "inDelivery"=TRUE THEN 1
+    ELSE 0
+END AS status
+FROM "Orders" AS o;
+
